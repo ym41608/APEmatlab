@@ -51,8 +51,7 @@ function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, delta, 
 	params.blur_kernel  = fspecial('gaussian', blur_size, blur_sigma);
 	marker = imfilter(marker,params.blur_kernel,'symmetric');
 	img = imfilter(img,params.blur_kernel,'symmetric');
-	imwrite(marker, 'marker.png');
-  imwrite(img, 'img.png');
+
 	% rgb to ycbcr
 	marker = rgb2ycbcrNorm(marker);
 	img = rgb2ycbcrNorm(img);

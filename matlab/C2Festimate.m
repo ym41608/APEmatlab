@@ -15,7 +15,7 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 	deltaFact = 1.511;
 	level = 0;
 	bestEa = [];
-    bestDists = zeros(1 ,8);
+  bestDists = zeros(1 ,8);
 	newDelta = delta;
 	totTime = 0;
 	while (1)
@@ -23,7 +23,6 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			
 			% calculate transformation matrix from poses
 			Poses2TransST = tic;
-      dlmwrite('poses.txt',poses, ' ');
 			[trans_mex, insiders] = Poses2Trans_mex(poses', int32(dim.img.h), int32(dim.img.w),...
 													in_mat(1,1), in_mat(1,3), in_mat(2,2), in_mat(2,3),...
 													dim.marker_w, dim.marker_h);
@@ -50,7 +49,7 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			totTime = totTime + Poses2TransTime + EvaluateEaTime;
 			
 			% get best pose with minimun Ea
-			[bestEa,ind] = min(distances)
+			[bestEa,ind] = min(distances);
 			bestConfig = poses(ind,:);
 			[~, ex_mat] = getTransAndExMatrix(poses(ind,:), in_mat);    
 			bestDists(level) = bestEa;
