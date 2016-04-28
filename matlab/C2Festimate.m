@@ -18,6 +18,11 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
   bestDists = zeros(1 ,8);
 	newDelta = delta;
 	totTime = 0;
+  if (photometricInvariance)
+    c1 = 0.75; c2 = 0.15;
+  else
+    c1 = 0.5; c2 = 0.1;
+  end
 	while (1)
 			level = level + 1;
 			
@@ -58,7 +63,7 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			end
 			
 			% terminate or not
-			if ( (bestEa < 0.005) || ((level > 2) && (bestEa < 0.015)) || ...
+			if ( (bestEa < 0.005) || ((level > 4) && (bestEa < 0.015)) || ...
 					((level > 3) && (bestEa > mean(bestDists(level-3:level-1))*0.97)) || ...
 					(level > 7) )
 				break
@@ -71,16 +76,18 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			end
 			
 			% expand the pose set for next round
-			if (photometricInvariance == 1)
-				constraint1 = 10^7;
-				constraint2 = 7.5*10^6;
-			else
-				constraint1 = 7.5*10^6;
-				constraint2 = 5*10^6;
-			end
-			if ((tooHighPercentage && (bestEa > 0.05) && ((level==1) && (size(poses, 1) < constraint1)) ) || ...  %%7.5
-				(                     (bestEa > 0.10) && ((level==1) && (size(poses, 1) < constraint2)) ) )  %% 5*10^6
-				fact = 0.9;
+			%if (photometricInvariance == 1)
+			%	constraint1 = 10^7;
+			%	constraint2 = 7.5*10^6;
+			%else
+			%	constraint1 = 7.5*10^6;
+			%	constraint2 = 5*10^6;
+			%end
+      %
+			%if ((tooHighPercentage && (bestEa > 0.05) && ((level==1) && (size(poses, 1) < constraint1)) ) || ...  %%7.5
+			%	(                     (bestEa > 0.10) && ((level==1) && (size(poses, 1) < constraint2)) ) )  %% 5*10^6
+			if ((level==1) && ((tooHighPercentage && (bestEa > c1) && (originNumPoses < 7500000)) || ((bestEa > c2) && (originNumPoses < 5000000)) ) )
+        fact = 0.9;
 				if (verbose)
 					fprintf('\n##### RESTARTING!!! changing from delta: %.3f, to delta: %.3f\n', newDelta, newDelta*fact);
 				end

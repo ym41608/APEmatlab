@@ -1,6 +1,6 @@
-function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, delta, minTz, maxTz)
-	
-	% dimensions of images
+function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, minDim, minTz, maxTz, delta)
+  
+  % dimensions of images
 	[hm, wm, ~] = size(marker);
 	[hi, wi, ~] = size(img);
 	dim.marker.w = wm;
@@ -15,14 +15,8 @@ function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, delta, 
 	imgY0 = in_mat(2,3);
 	
 	% search range in pose domain
-	marker_w = wm/min(wm, hm)*0.5;
-	marker_h = hm/min(wm, hm)*0.5;
-	Tx_width = (imgX0 * maxTz) / Sxf - min(marker_w,marker_h);
-	Ty_width = (imgY0 * maxTz) / Syf - min(marker_w,marker_h);
-	minTx = -Tx_width;
-	maxTx = Tx_width;
-	minTy = -Ty_width;
-	maxTy = Ty_width;
+	marker_w = wm/min(wm, hm)*minDim;
+	marker_h = hm/min(wm, hm)*minDim;
 	minRx = 0;
 	maxRx = 80*pi/180;
 	minRz = -pi;
@@ -31,19 +25,17 @@ function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, delta, 
 	dim.marker_h = marker_h;
 	
 	% cal steps and bounds
-	bounds.tx = [minTx, maxTx];
-	bounds.ty = [minTy, maxTy];
 	bounds.tz = [minTz,maxTz];
 	bounds.rx = [minRx,maxRx];
 	bounds.rz = [minRz,maxRz];
 	mdian_tz = sqrt(minTz*maxTz);
-	steps.tx = delta/sqrt(2)/mdian_tz;
-	steps.ty = delta/sqrt(2)/mdian_tz;
+	steps.tx = delta/sqrt(2)/mdian_tz*2*minDim;
+	steps.ty = delta/sqrt(2)/mdian_tz*2*minDim;
 	steps.tz = delta/sqrt(2)/mdian_tz;
 	steps.rx = delta/sqrt(2)/mdian_tz;
 	steps.rz0 = delta*sqrt(2)/mdian_tz;
 	steps.rz1 = delta*sqrt(2)/mdian_tz;
-	
+  
 	% smooth images
 	blur_sigma = calSigmaValue(rgb2gray(marker), Sxf, Syf, dim, minTz*maxTz);
 	fprintf('blur sigma : %d\n', blur_sigma);

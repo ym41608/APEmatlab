@@ -1,18 +1,18 @@
-function [bestConfig,ex_mat,delta,sampledError] = APE(marker,img,in_mat,... % mandatory
-   photometricInvariance,delta,minTz,maxTz,verbose,epsilon) %optional                                                                        
+function [bestConfig,ex_mat,delta,sampledError] = APE(marker,img,in_mat,minDim,... % mandatory
+   photometricInvariance,minTz,maxTz,delta,verbose,epsilon) %optional                                                                        
 	
 	% set default values for optional variables
 	if (~exist('photometricInvariance','var'))
 		photometricInvariance = 0;
-	end
-	if (~exist('delta','var'))
-		delta = 0.25;
 	end
 	if (~exist('minTz','var'))
 		minTz = 3;
 	end
 	if (~exist('maxTz','var'))
 		maxTz = 8;
+	end
+  if (~exist('delta','var'))
+		delta = 0.25;
 	end
 	if (~exist('verbose','var'))
 		verbose = 0;
@@ -32,10 +32,12 @@ function [bestConfig,ex_mat,delta,sampledError] = APE(marker,img,in_mat,... % ma
 	end
 	
 	% preCalculation
-	[marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, delta, minTz, maxTz);
-	
+  t1 = tic;
+	[marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, minDim, minTz, maxTz, delta);
+	fprintf('pre-time: %f', toc(t1));
 	% coarse-to-fine estimation
+  t2 = tic;
 	[bestConfig,ex_mat,delta,sampledError] = C2Festimate(marker,img,in_mat,bounds,steps,dim,epsilon,delta,photometricInvariance,verbose);
-	
+	fprintf('post-time: %f', toc(t2));
 	return
 end
