@@ -1,4 +1,4 @@
-function ex_mat = TestImage_APE(Marker, img, in_mat, minDim, needcompile, photometricInvariance,delta,minTz,maxTz,verbose)
+function ex_mat = TestImage_APE(Marker, img, in_mat, minDim, minTz, maxTz, delta, photometricInvariance, needcompile, verbose)
     
     % adding 2 subdirectories to Matlab PATH
 	AddPaths
