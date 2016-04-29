@@ -1,5 +1,6 @@
 function [corner_x, corner_y] = draw_coordinate(extrinsic, intrinsic)
-	M_4_4 = intrinsic * [extrinsic; 0 0 0 1];     %%    transform marker coor to camera screen
+	intrinsic(2, 2) = -intrinsic(2, 2);
+  M_4_4 = intrinsic * [extrinsic; 0 0 0 1];     %%    transform marker coor to camera screen
 	boundary_x = 5 .* [0 0.1 0 0]; 
 	boundary_y = 5 .* [0 0 0.1 0];
 	boundary_z = 5 .* [0 0 0 0.1];

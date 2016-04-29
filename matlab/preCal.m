@@ -10,7 +10,7 @@ function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, minDim,
 	
 	% intrinsic parameter
 	Sxf = in_mat(1,1);
-	Syf = -in_mat(2,2);
+	Syf = in_mat(2,2);
 	imgX0 = in_mat(1,3);
 	imgY0 = in_mat(2,3);
 	

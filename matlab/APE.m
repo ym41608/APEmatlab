@@ -23,7 +23,7 @@ function [bestConfig,ex_mat,delta,sampledError] = APE(marker,img,in_mat,minDim,.
 	if (~exist('in_mat', 'var'))  %% get intrinsic based on camera image
 		[h2,w2,~] = size(img);
 		focal_length = norm([h2, w2]);
-		in_mat = [focal_length,0,h2/2,0;0,-focal_length,w2/2,0;0,0,1,0;0,0,0,1];
+		in_mat = [focal_length,0,h2/2,0;0,focal_length,w2/2,0;0,0,1,0;0,0,0,1];
 	end
 	
 	% ensure the data type of images is double

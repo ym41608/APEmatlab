@@ -3,7 +3,7 @@ Marker = imread('imgs/Isetta.png');
 I = imread('imgs/10.png');
 [height, width, ~] = size(I);
 focal_length = norm([height, width]);
-in_mat = [focal_length,0,width/2,0;0,-focal_length,height/2,0;0,0,1,0;0,0,0,1];
+in_mat = [focal_length,0,width/2,0;0, focal_length,height/2,0;0,0,1,0;0,0,0,1];
 exmat = TestImage_APE(im2double(Marker), im2double(I), in_mat, 0.5, 1, 0, 0.25, 3, 8, 1);
 
 f = figure('Position', [150 150 1280 720]);
