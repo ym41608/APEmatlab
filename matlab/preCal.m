@@ -33,8 +33,8 @@ function [marker, img, bounds, steps, dim] = preCal(in_mat, marker, img, minDim,
 	steps.ty = delta/sqrt(2)/mdian_tz*2*minDim;
 	steps.tz = delta/sqrt(2)/mdian_tz;
 	steps.rx = delta/sqrt(2)/mdian_tz;
-	steps.rz0 = delta*sqrt(2)/mdian_tz;
-	steps.rz1 = delta*sqrt(2)/mdian_tz;
+	steps.rz0 = delta*sqrt(2);
+	steps.rz1 = delta*sqrt(2);
   
 	% smooth images
 	blur_sigma = calSigmaValue(rgb2gray(marker), Sxf, Syf, dim, minTz*maxTz);

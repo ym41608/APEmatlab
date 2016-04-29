@@ -54,11 +54,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
             double ty = -ty_w;
 						while (ty < ty_w){
 							numTranslate++;
-              ty += ty_step * (tz+length*sin(rx));//sqrt((tz+marker_w*sin(rx))*(tz-marker_w*sin(rx)));//
+              ty += ty_step * (tz+length*sin(rx));
 						}
-						tx += tx_step * (tz+length*sin(rx));//sqrt((tz+marker_w*sin(rx))*(tz-marker_w*sin(rx)));//
+						tx += tx_step * (tz+length*sin(rx));
 					}
-					rz0 += rz0_step*(tz_mid);// * sqrt((tz+0.5*sin(rx))*(tz-0.5*sin(rx)));
+					rz0 += rz0_step;
           if (rx == 0)
             rz0 = rz_max+1;
 				}
@@ -68,13 +68,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
         else
           rx = -rx_max - 1;
 			}
-      rz1 += rz1_step*(tz_mid);// * tz;
+      rz1 += rz1_step;
 		}
     tz += tz*tz * tz_step / (1 - tz_step*tz);
 	}
 
   plhs[0] = mxCreateDoubleMatrix(6, numTranslate, mxREAL );  // 6 for variable for pose variable
-  double *configs = mxGetPr(plhs[0]);//
+  double *configs = mxGetPr(plhs[0]);
     
 	// MAIN LOOP
 	int gridInd = 0;
@@ -98,11 +98,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
               configs[gridInd++] = -rx;
               configs[gridInd++] = rz0;
               configs[gridInd++] = rz1;
-              ty += ty_step * (tz+length*sin(rx));//sqrt((tz+marker_w*sin(rx))*(tz-marker_w*sin(rx)));//
+              ty += ty_step * (tz+length*sin(rx));
             }
-            tx += tx_step * (tz+length*sin(rx));//sqrt((tz+marker_w*sin(rx))*(tz-marker_w*sin(rx)));//
+            tx += tx_step * (tz+length*sin(rx));
           }
-          rz0 += rz0_step*(tz_mid);// * sqrt((tz+0.5*sin(rx))*(tz-0.5*sin(rx)));
+          rz0 += rz0_step;
           if (rx == 0)
             rz0 = rz_max+1;
 				}
@@ -112,7 +112,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
         else
           rx = -rx_max - 1;
 			}
-      rz1 += rz1_step*(tz_mid);// * tz;
+      rz1 += rz1_step;
 		}
     tz += tz*tz * tz_step / (1 - tz_step*tz);
 	}

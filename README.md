@@ -7,6 +7,11 @@ ver2. 160428
   fix the step setting for tx ty
   fix terminate and restart constraint
 
+ver2.1 160429
+  fix restart constraint
+  fix redundant calculation of rz0, rz1 step * tz_mid
+  optimize Poses2Trans_mex rejection condition 
+ 
 ### Run
 
 Run singleTest.m

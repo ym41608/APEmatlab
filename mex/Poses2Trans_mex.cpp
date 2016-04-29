@@ -1,12 +1,10 @@
 #include "mex.h"
 #include <math.h>
+#include <algorithm>
 #include <omp.h>
 
 void mexFunction(int nlhs, mxArray *plhs[], 
-				 int nrhs, const mxArray *prhs[])
-{
-
-	
+				 int nrhs, const mxArray *prhs[]) {
 
 	// inputs
 	double *poses;
@@ -31,21 +29,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	poses = mxGetPr(prhs[0]);
 	hI = double(mxGetScalar(prhs[1]));
 	wI = double(mxGetScalar(prhs[2]));
-    Sxf = mxGetScalar(prhs[3]);
-    x_w = mxGetScalar(prhs[4]);
-    Syf = mxGetScalar(prhs[5]);
-    y_h = mxGetScalar(prhs[6]);
+  Sxf = mxGetScalar(prhs[3]);
+  x_w = mxGetScalar(prhs[4]);
+  Syf = mxGetScalar(prhs[5]);
+  y_h = mxGetScalar(prhs[6]);
 	marker_w = mxGetScalar(prhs[7]);
 	marker_h = mxGetScalar(prhs[8]);
 
-
 	// MAIN LOOP
-    int i = 0;
+  int i = 0;
 	#pragma omp parallel for private(i) num_threads(8)
-	for (i = 0 ; i < numPoses ; i++)
-	{
-        double r11,r12,r13,r21,r22,r23,r31,r32,r33,tx,ty,tz,rx,rz0,rz1;
-	
+	for (i = 0 ; i < numPoses ; i++) {
+    double r11,r12,r13,r21,r22,r23,r31,r32,r33,tx,ty,tz,rx,rz0,rz1;
+    
 		tx = poses[6*i];
 		ty = poses[6*i+1];
 		tz = poses[6*i+2];
@@ -99,21 +95,20 @@ void mexFunction(int nlhs, mxArray *plhs[],
                      (trans[16*i+8] *(-marker_w) + trans[16*i+9]*(+marker_h) + trans[16*i+11]);
 		double c4y = (trans[16*i+4] *(-marker_w) + trans[16*i+5]*(+marker_h) + trans[16*i+7]) /
                      (trans[16*i+8] *(-marker_w) + trans[16*i+9]*(+marker_h) + trans[16*i+11]);
-        int k = int((c1x>=0)&&(c1x<wI)&&
-					(c1y>=0)&&(c1y<hI)&&
-                    (c2x>=0)&&(c2x<wI)&&
-					(c2y>=0)&&(c2y<hI)&&
-                    (c3x>=0)&&(c3x<wI)&&
-					(c3y>=0)&&(c3y<hI)&&
-                    (c4x>=0)&&(c4x<wI)&&
-					(c4y>=0)&&(c4y<hI));
-       
-        double distance1 = (c1x-c3x)*(c1x-c3x) + (c1y-c3y)*(c1y-c3y);
-        double distance2 = (c2x-c4x)*(c2x-c4x) + (c2y-c4y)*(c2y-c4y);
-        if (distance1 > 16 && distance2 > 16)
-			insiders[i] = k;
+
+    // reject transformations make marker too small in screen
+    double distance1 = (c1x-c3x)*(c1x-c3x) + (c1y-c3y)*(c1y-c3y);
+    double distance2 = (c2x-c4x)*(c2x-c4x) + (c2y-c4y)*(c2y-c4y);
+    
+    float minx = std::min(c1x, std::min(c2x, std::min(c3x, c4x)));
+    float maxx = std::max(c1x, std::max(c2x, std::max(c3x, c4x)));
+    float miny = std::min(c1y, std::min(c2y, std::min(c3y, c4y)));
+    float maxy = std::max(c1y, std::max(c2y, std::max(c3y, c4y)));
+    
+    if (distance1 > 16 && distance2 > 16 && (minx >= 0) && (maxx < wI) && (miny >= 0) && (maxy < hI))
+			insiders[i] = 1;
 		else
 			insiders[i] = 0;
-	}		
+	}
 }
 

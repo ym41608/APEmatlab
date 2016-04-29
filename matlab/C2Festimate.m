@@ -19,9 +19,9 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 	newDelta = delta;
 	totTime = 0;
   if (photometricInvariance)
-    c1 = 0.75; c2 = 0.15;
+    c1 = 0.075; c2 = 0.15;
   else
-    c1 = 0.5; c2 = 0.1;
+    c1 = 0.05; c2 = 0.1;
   end
 	while (1)
 			level = level + 1;
@@ -34,8 +34,14 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			inBoundaryInds = find(insiders);
 			trans_mex = trans_mex(:,inBoundaryInds);
 			poses = poses(inBoundaryInds,:);
+      numPoses = size(poses, 1);
 			Poses2TransTime = toc(Poses2TransST);
-	
+      if (verbose)
+				fprintf('\n***\n');
+				fprintf('*** level %d:|Number of Poses| = %d\n',level,numPoses);
+				fprintf('***\n');
+			end
+      
 			% evaluate Ea of all poses
 			EvaluateEaST = tic;
 			if (photometricInvariance)
@@ -48,7 +54,7 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 												marker(:,:,3)',img(:,:,3)',trans_mex,int32(xs),int32(ys),dim.marker_w,dim.marker_h);
 			end
 			if (verbose)
-				fprintf('----- Evaluate Ea, with %d poses -----\n',size(poses,1));
+				fprintf('----- Evaluate Ea -----\n');
 			end
 			EvaluateEaTime = toc(EvaluateEaST);
 			totTime = totTime + Poses2TransTime + EvaluateEaTime;
@@ -70,9 +76,12 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 			end
 			
 			% select poses within threshold to be in the next round
+      if (verbose)
+				fprintf('----- Evaluate Ea -----\n');
+			end
 			[~, goodPoses, percentage, tooHighPercentage] = GetPosesByDistance(poses,bestEa,newDelta,distances,verbose);
 			if (verbose)
-				fprintf('----- Survived percentage : %f -----\n',percentage * 100);
+				fprintf('$$$ Survived percentage = %f\n',percentage * 100);
 			end
 			
 			% expand the pose set for next round
@@ -86,7 +95,7 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
       %
 			%if ((tooHighPercentage && (bestEa > 0.05) && ((level==1) && (size(poses, 1) < constraint1)) ) || ...  %%7.5
 			%	(                     (bestEa > 0.10) && ((level==1) && (size(poses, 1) < constraint2)) ) )  %% 5*10^6
-			if ((level==1) && ((tooHighPercentage && (bestEa > c1) && (originNumPoses < 7500000)) || ((bestEa > c2) && (originNumPoses < 5000000)) ) )
+			if ((level==1) && ((tooHighPercentage && (bestEa > c1) && (numPoses < 7500000)) || ((bestEa > c2) && (numPoses < 5000000)) ) )
         fact = 0.9;
 				if (verbose)
 					fprintf('\n##### RESTARTING!!! changing from delta: %.3f, to delta: %.3f\n', newDelta, newDelta*fact);
@@ -101,7 +110,6 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 				steps.rz1 = fact*steps.rz1;
 				[poses, ~] = CreateEpsilonCoverSet(in_mat, bounds, steps, dim);
 			else
-				%numPoses = size(poses, 1);
 				prevDelta = newDelta;
 				newDelta = newDelta/deltaFact;
 				if (verbose)
@@ -109,11 +117,6 @@ function [bestConfig,ex_mat,newDelta,sampledError] = C2Festimate(marker, img, in
 				end
 				expandedPoses = ExpandPoses(goodPoses,steps,level,80,deltaFact,bounds,dim.marker_w,dim.marker_h);
 				poses = [goodPoses ; expandedPoses];
-				if (verbose)
-					fprintf('\n***\n');
-					fprintf('*** level %d:|Poses within threshold| = %d, |expandedPoses| = %d\n',level,numPoses,size(poses,1));
-					fprintf('***\n');
-				end
 			end
 			
 			% re-sample pixels to calculate Ea

@@ -26,8 +26,8 @@ function expandedConfigs = ExpandConfigsRandom(configs,steps,level,npoints,delta
   positve4  = 1./addvec(:,4).*( asin(2 - 1./ (1./(2-sin(expanded(:,4))) + addvec(:,4))) - expanded(:,4));
   negative4 = 1./addvec(:,4).*( expanded(:,4) - asin(2 - 1./ (1./(2-sin(expanded(:,4))) - addvec(:,4))));
   addvec(:,4) = addvec(:,4).*((randvec(:,4) >= 0) .* positve4 + (randvec(:,4) < 0).* negative4);
-  addvec(:,5) = addvec(:,5).*(sqrt(bounds.tz(1)*bounds.tz(2)));
-  addvec(:,6) = addvec(:,6).*(sqrt(bounds.tz(1)*bounds.tz(2)));
+  addvec(:,5) = addvec(:,5);
+  addvec(:,6) = addvec(:,6);
   
   % expand poses
   expandedConfigs = expanded + randvec.*addvec;
