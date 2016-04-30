@@ -14,7 +14,10 @@ ver2.1 160429
 
 ver2.2 160429
   fix input intrinsic matrix
-  
+
+ver2.3 160430
+  principle point add 0.5
+
 ### Run
 
 Run singleTest.m

@@ -65,10 +65,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		trans[16*i+1] = Sxf*r12 + x_w*r32;
 		trans[16*i+2] = Sxf*r13 + x_w*r33;
 		trans[16*i+3] = Sxf*tx  + x_w*tz;
-		trans[16*i+4] = -Syf*r21 + (y_h-1)*r31;
-		trans[16*i+5] = -Syf*r22 + (y_h-1)*r32;
-		trans[16*i+6] = -Syf*r23 + (y_h-1)*r33;
-		trans[16*i+7] = -Syf*ty  + (y_h-1)*tz;
+		trans[16*i+4] = -Syf*r21 + y_h*r31;
+		trans[16*i+5] = -Syf*r22 + y_h*r32;
+		trans[16*i+6] = -Syf*r23 + y_h*r33;
+		trans[16*i+7] = -Syf*ty  + y_h*tz;
 		trans[16*i+8] = r31;
 		trans[16*i+9] = r32;
 		trans[16*i+10] = r33;
